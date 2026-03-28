@@ -1,0 +1,284 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --primary: #00aeef;
+    --dark: #00395d;
+    --navy: #001e3c;
+    --bg: #ffffff;
+    --card-bg: #f8fafc;
+    --text-primary: #0f172a;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --safe: #22c55e;
+    --spam: #ef4444;
+}
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg);
+    color: var(--text-primary);
+    width: 320px;
+    height: auto;
+    overflow-x: hidden;
+}
+
+.extension-container {
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px; 
+}
+
+header {
+    background: var(--primary);
+    width: 100%;
+    height: 58px; 
+    border-radius: 16px 16px 16px 16px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    position: relative;
+    padding: 20px;
+}
+
+.logo-box {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.barclays-logo {
+    height: 130px !important;
+    width: auto;
+    object-fit: contain;
+    filter: brightness(0) invert(1); 
+}
+
+.logo-container {
+    padding-top: 10px;
+    margin-bottom: -8px;
+}
+
+.logo-container h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--dark);
+    letter-spacing: -0.5px;
+    margin-bottom: 25px;
+}
+
+.logo-container h1 span {
+    color: var(--primary);
+    font-weight: 500;
+}
+
+.status-indicator {
+    padding: 6px 16px;
+    background: #f8fafc;
+    border-radius: 100px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--border);
+}
+
+#statusText {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #e2e8f0;
+}
+
+.dot.active {
+    background-color: var(--primary);
+    box-shadow: 0 0 8px var(--primary);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.5; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid var(--border);
+}
+
+.card h3 {
+    margin-bottom: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.preview-box {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    min-height: 80px;
+}
+
+.btn-wrap {
+    width: 100%;
+}
+
+.primary-btn {
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 14px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #ffffff, #87cefa, var(--primary));
+  border: 2px solid #001021;
+  border-bottom: 5px solid #001021;
+  color: #001021;
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translateY(-2px);
+}
+
+.primary-btn:hover {
+  background: linear-gradient(180deg, #f0f9ff, var(--primary), var(--dark));
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 57, 93, 0.2);
+}
+
+.primary-btn:active {
+  transform: translateY(0);
+  border-bottom: 2px solid #001021;
+}
+
+.primary-btn:disabled {
+    opacity: 0.6;
+    cursor: wait;
+    transform: none;
+    border-bottom: 2px solid #001021;
+}
+
+/* Loader Styling */
+.btn-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.loader {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    margin-top: 4px;
+}
+
+.loader div {
+    width: 8%;
+    height: 24%;
+    background: currentColor;
+    position: absolute;
+    left: 50%;
+    top: 30%;
+    opacity: 0;
+    border-radius: 50px;
+    animation: fade 1s linear infinite;
+}
+
+@keyframes fade { from { opacity: 1; } to { opacity: 0.2; } }
+
+.loader .bar1 { transform: rotate(0deg) translate(0, -130%); animation-delay: 0s; }
+.loader .bar2 { transform: rotate(30deg) translate(0, -130%); animation-delay: -1.1s; }
+.loader .bar3 { transform: rotate(60deg) translate(0, -130%); animation-delay: -1s; }
+.loader .bar4 { transform: rotate(90deg) translate(0, -130%); animation-delay: -0.9s; }
+.loader .bar5 { transform: rotate(120deg) translate(0, -130%); animation-delay: -0.8s; }
+.loader .bar6 { transform: rotate(150deg) translate(0, -130%); animation-delay: -0.7s; }
+.loader .bar7 { transform: rotate(180deg) translate(0, -130%); animation-delay: -0.6s; }
+.loader .bar8 { transform: rotate(210deg) translate(0, -130%); animation-delay: -0.5s; }
+.loader .bar9 { transform: rotate(240deg) translate(0, -130%); animation-delay: -0.4s; }
+.loader .bar10 { transform: rotate(270deg) translate(0, -130%); animation-delay: -0.3s; }
+.loader .bar11 { transform: rotate(300deg) translate(0, -130%); animation-delay: -0.2s; }
+.loader .bar12 { transform: rotate(330deg) translate(0, -130%); animation-delay: -0.1s; }
+
+.result-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-top: 4px solid var(--primary);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+
+.history-section h4 {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+}
+
+.history-item {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.history-status {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+}
+
+.history-status.safe { background: #dcfce7; color: #166534; }
+.history-status.spam { background: #fee2e2; color: #991b1b; }
+
+footer {
+    text-align: center;
+    margin-top: 8px;
+    opacity: 0.5;
+}
+
+footer p { font-size: 9px; }
+
+.hidden { display: none !important; }

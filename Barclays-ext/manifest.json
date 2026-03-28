@@ -1,0 +1,27 @@
+{
+    "manifest_version": 3,
+    "name": "Barclays Email Spam Detector",
+    "version": "1.0",
+    "description": "AI-powered spam detection for your emails.",
+    "action": {
+        "default_popup": "index.html",
+        "default_icon": "icon.png"
+    },
+    "permissions": ["storage", "tabs", "scripting"],
+    "host_permissions": ["https://mail.google.com/*", "http://localhost:*/*", "http://127.0.0.1:*/*"],
+    "content_scripts": [
+        {
+            "matches": ["https://mail.google.com/*"],
+            "js": ["content.js"]
+        }
+    ],
+    "icons": {
+        "128": "icon.png"
+    },
+    "web_accessible_resources": [
+        {
+            "resources": ["barclays.png", "icon.png"],
+            "matches": ["https://mail.google.com/*"]
+        }
+    ]
+}

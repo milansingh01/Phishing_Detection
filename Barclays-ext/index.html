@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barclays Spam Detector</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="extension-container">
+        <!-- Branded Header Banner -->
+        <header class="header">
+            <div class="logo-box">
+                <img src="barclays.png" alt="Barclays" class="barclays-logo">
+            </div>
+        </header>
+
+        <!-- Top Title and Status Section -->
+        <div class="header-content-wrapper" style="text-align: center; margin-bottom: 10px;">
+            <div class="logo-container">
+                <h1>Spam <span>Detector</span></h1>
+            </div>
+            <div class="status-indicator" style="margin: 0 auto;">
+                <div class="dot active"></div>
+                <span id="statusText">Ready to scan</span>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Email Preview Section -->
+            <div class="card">
+                <h3>Email Preview</h3>
+                <div class="preview-box" id="emailPreview">
+                    <p class="placeholder-text">Select an email to begin analysis...</p>
+                </div>
+            </div>
+
+            <!-- Result Section -->
+            <div id="resultSection" class="result-card hidden">
+                <div class="result-icon-container">
+                    <div id="safeIcon" class="hidden">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    </div>
+                    <div id="spamIcon" class="hidden">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    </div>
+                </div>
+                <h2 id="resultTitle">Analyzing...</h2>
+                <p id="resultDesc">Our AI is checking for malicious patterns.</p>
+                
+                <!-- New Feature Insights -->
+                <div id="securityInsights" class="hidden" style="margin-top: 16px; border-top: 1px solid var(--border); padding-top: 16px; text-align: left;">
+                    <div class="insight-row" style="margin-bottom: 12px;">
+                        <strong style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Fraud Reasoning</strong>
+                        <p id="reasoningText" style="font-size: 11px; margin: 4px 0 0 0; color: var(--dark); line-height: 1.4; font-weight: 500;"></p>
+                    </div>
+                    
+                    <div class="insight-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div class="insight-item">
+                            <strong style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Attachments</strong>
+                            <p id="attachmentTypes" style="font-size: 11px; margin: 4px 0 0 0; color: #00395d; font-weight: 700;"></p>
+                        </div>
+                        <div class="insight-item">
+                            <strong style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Language</strong>
+                            <p id="languageDetected" style="font-size: 11px; margin: 4px 0 0 0; color: #00395d; font-weight: 700;"></p>
+                        </div>
+                        <div class="insight-item" style="grid-column: span 2; padding: 8px; background: rgba(0, 174, 239, 0.05); border-radius: 6px; border-left: 3px solid var(--primary);">
+                            <strong style="font-size: 10px; color: var(--primary); text-transform: uppercase;">Credential Safety Check</strong>
+                            <p id="credentialStatus" style="font-size: 11px; margin: 4px 0 0 0; color: var(--dark); font-weight: 600;">No credentials requested (Safe)</p>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 16px; background: #f1f5f9; padding: 8px; border-radius: 8px; font-size: 9px; color: #64748b; font-weight: 500;">
+                        <span>System Stat: </span>
+                        <span id="modelAccuracy">99.2% True Positive Balance</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scan History Display -->
+            <div class="history-section">
+                <h4>Recent Scans</h4>
+                <div class="history-list" id="historyList">
+                    <!-- Javascript will populate this -->
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer Info -->
+        <footer class="footer">
+            <p>Protected by Barclays Security</p>
+        </footer>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>

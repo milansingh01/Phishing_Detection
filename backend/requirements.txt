@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+sqlalchemy
+pydantic
+transformers
+torch
+langdetect
+regex
+spacy
+python-multipart
+beautifulsoup4
+PyMuPDF
+Pillow
+PyJWT
+passlib
+bcrypt
