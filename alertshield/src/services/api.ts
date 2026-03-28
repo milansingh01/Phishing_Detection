@@ -37,7 +37,7 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export const fetchDashboardData = async (department: string): Promise<DashboardResponse> => {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch(`http://127.0.0.1:8000/api/dashboard?department=${encodeURIComponent(department)}`, {
+    const response = await fetch(`http://127.0.0.1:8001/api/dashboard?department=${encodeURIComponent(department)}`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -69,7 +69,7 @@ export const fetchDashboardData = async (department: string): Promise<DashboardR
 export const updateVerificationStatus = async (caseId: string, status: string): Promise<boolean> => {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch(`http://127.0.0.1:8000/api/dashboard/cases/${caseId}/verify`, {
+    const response = await fetch(`http://127.0.0.1:8001/api/dashboard/cases/${caseId}/verify`, {
       method: 'PATCH',
       headers: { 
         'Content-Type': 'application/json',

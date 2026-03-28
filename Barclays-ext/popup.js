@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 reasoningText.textContent = "Computing AI inference...";
                 
                 try {
-                    const response = await fetch('http://localhost:8000/api/analyze', {
+                    const response = await fetch('http://localhost:8001/api/analyze', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'

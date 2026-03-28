@@ -56,7 +56,7 @@ function detectEmail() {
     }
 
     // Automatically send to Backend for Fraud Team Dashboard independently of Popup state
-    fetch('http://localhost:8000/api/analyze', {
+    fetch('http://localhost:8001/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(result)
