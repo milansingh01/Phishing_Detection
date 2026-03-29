@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const body = document.querySelector('.ii.gt, .a3s')?.innerText || '';
                 // Advanced Attachment & Image Detection
                 let attachments = [];
-                const downloadLinks = document.querySelectorAll('a[download], [aria-label*="Attachment"], .vI, .aYw, .hq, .a8X, .a78, .Xv, [role="listitem"]');
+                const downloadLinks = document.querySelectorAll('a[download], [aria-label*="Attachment"], .vI');
                 downloadLinks.forEach(el => {
                     let name = el.getAttribute('download') || el.innerText.trim();
                     if (!name && el.getAttribute('aria-label')) {

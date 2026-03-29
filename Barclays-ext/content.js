@@ -18,8 +18,8 @@ function detectEmail() {
     // Advanced Attachment & Image Detection
     let attachmentsArr = [];
     
-    // 1. Search for actual Downloadable attachments
-    const downloadLinks = document.querySelectorAll('a[download], [aria-label*="Attachment"], .vI, .aYw, .hq, .a8X, .a78, .Xv, [role="listitem"]');
+    // 1. Search for actual Downloadable attachments safely
+    const downloadLinks = document.querySelectorAll('a[download], [aria-label*="Attachment"], .vI');
     downloadLinks.forEach(el => {
         let name = el.getAttribute('download') || el.innerText.trim();
         // Fallback for aria-label "Attachment: filename.pdf"

@@ -9,7 +9,7 @@ class RuleEngine:
         self.credential_patterns = {
             "OAuth Token": r"ya29\.[0-9a-zA-Z_-]{20,}",
             "Bearer Token": r"Bearer\s+([A-Za-z0-9\-\._~\+\/]{20,})",
-            "Cleartext Password": r"(?i)(?:password|pwd|passcode|pass)[\s=:]+([a-zA-Z0-9!@#\$%\^&\*]{6,})",
+            "Cleartext Password": r"(?i)(?:password|pwd|passcode|pass|username|user)[\s=:,-]+([a-zA-Z0-9!@#\$%\^&\*.-]{4,})",
             "Database Connection": r"(postgres|mysql|mongodb):\/\/[a-zA-Z0-9_]+:([^@]+)@[\w\.-]+",
             "Credit Card": r"\b(?:\d[ -]*?){13,16}\b",
             "API Key": r"(?i)(api[_-]?key|secret|token)[\s=:]+([A-Za-z0-9_-]{16,})"
