@@ -16,7 +16,10 @@ export interface DashboardResponse {
     fraudDetected: number;
     safeEmails: number;
     accuracy: number;
-    moneySaved: number;
+    financialLossPrevented: number;
+    malwareIntercepted: number;
+    credentialTheftsPrevented: number;
+    farRate: number;
   };
   charts: {
     emailsScanned: { date: string; emails: number }[];
@@ -58,7 +61,7 @@ export const fetchDashboardData = async (department: string): Promise<DashboardR
     console.error("Dashboard backend fetch failed, using fallback/error handling", error);
     // Returning empty structure on failure so UI doesn't completely crash immediately
     return {
-      kpis: { totalScanned: 0, fraudDetected: 0, safeEmails: 0, accuracy: 0, moneySaved: 0 },
+      kpis: { totalScanned: 0, fraudDetected: 0, safeEmails: 0, accuracy: 0, financialLossPrevented: 0, malwareIntercepted: 0, credentialTheftsPrevented: 0, farRate: 0 },
       charts: { emailsScanned: [], fraudVsSafe: [], departmentCases: [] },
       cases: [],
       performance: { accuracy: 0, falsePositives: 0, falseNegatives: 0 },

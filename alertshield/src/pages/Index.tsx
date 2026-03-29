@@ -30,8 +30,8 @@ const Index = () => {
     };
 
     loadData();
-    // Quick polling every 5 seconds to simulate real-time dashboard updates from kafka
-    const interval = setInterval(loadData, 5000);
+    // Reduced polling frequency from 5s to 20s to prevent intensive re-renders while interacting with data tables
+    const interval = setInterval(loadData, 20000);
     return () => clearInterval(interval);
   }, [selectedDepartment]);
 
@@ -40,6 +40,7 @@ const Index = () => {
 
   // ✅ MAPPED CASES
   const casesMapped = data?.cases.map(c => ({
+    id: c.id,
     employee: c.sender === "Unknown Extracted" ? "unknown@external.com" : c.sender,
     department: c.department,
     emailId: c.sender === "Unknown Extracted" ? "unknown@external.com" : c.sender,
@@ -58,21 +59,31 @@ const Index = () => {
   })) || [];
 
   const handleVerify = async (id: string, status: string) => {
-      // Optimistic update omitted, we just await and reload
-      const success = await import("@/services/api").then(m => m.updateVerificationStatus(id, status));
-      if (success) {
-          const result = await fetchDashboardData(selectedDepartment);
-          setData(result);
+      // Instant Optimistic UI Update to prevent UI stutter/rollback
+      if (data) {
+          const updatedCases = data.cases.map(c => 
+              c.id === id ? { ...c, humanVerification: status } : c
+          );
+          setData({ ...data, cases: updatedCases });
+      }
+
+      try {
+          // Send request in background without freezing UI
+          const { updateVerificationStatus } = await import("@/services/api");
+          await updateVerificationStatus(id, status);
+      } catch (err) {
+          console.error("Failed to update status on server.");
+          // Revert on failure (optional)
       }
   };
 
-  // ✅ NEW KPI STRUCTURE
+  // ✅ PROMINENT EFFICIENT & ADVANCED KPIS
   const kpis = [
-    { title: "Active Threats (Live)", value: data?.kpis.fraudDetected || 0, icon: AlertTriangle },
-    { title: "High Risk Emails (Priority Queue)", value: data?.kpis.fraudDetected || 0, icon: ShieldAlert },
-    { title: "False Negative Risk", value: `${(100 - (data?.kpis.accuracy || 100)).toFixed(1)}%`, icon: Target },
-    { title: "Detection Trend", value: "Improving", icon: Activity },
-    { title: "Total Scanned", value: data?.kpis.totalScanned || 0, icon: BrainCircuit },
+    { title: "Active Threats", value: data?.kpis.fraudDetected || 0, icon: AlertTriangle },
+    { title: "Financial Loss Prevented", value: `$${(data?.kpis.financialLossPrevented || 0).toLocaleString()}`, icon: BrainCircuit },
+    { title: "Malware Blocked", value: data?.kpis.malwareIntercepted || 0, icon: Target },
+    { title: "Credential Thefts Stopped", value: data?.kpis.credentialTheftsPrevented || 0, icon: ShieldAlert },
+    { title: "False Alarm Rate (FAR)", value: `${data?.kpis.farRate || 0}%`, icon: Activity },
     { title: "Safe Scanned", value: data?.kpis.safeEmails || 0, icon: Mail },
   ];
 

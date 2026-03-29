@@ -33,23 +33,30 @@ async def analyze_email_from_extension(payload: ExtensionPayload):
         
     final_label = ml_results["label"]
     final_score = ml_results["score"]
-    reasoning = ml_results["reasoning"] + " " + attach_results["reasoning"]
+    
+    # Clean reasoning string aggregation
+    reasons = []
+    if ml_results["reasoning"]: reasons.append(ml_results["reasoning"])
+    if attach_results["reasoning"]: reasons.append(attach_results["reasoning"])
+    if cred_results["has_leaks"]: reasons.append(f"Credentials Exposed: {', '.join(cred_results['leak_types'])}.")
+    
+    reasoning = " ".join(reasons)
     
     if cred_results["has_leaks"] or combined_flags.get("malicious_executable"):
         final_label = "Phishing"
-        final_score = max(final_score, 95.0)
+        final_score = max(final_score, 99.0)
     elif final_label == "Legitimate" and len(combined_flags) > 0:
-        if combined_flags.get("ai_generated_suspicion") or combined_flags.get("compressed_archive"):
+        if combined_flags.get("html_smuggling_suspect") or combined_flags.get("compressed_archive"):
             final_label = "Phishing"
             final_score = 80.0
         else:
             final_score = min(final_score, 60.0)
             
-    # Also adjust labels right away into the DB ("Fraud" -> "Phishing", "Safe" -> "Legitimate")
+    # Normalize labels
     if final_label == "Fraud": final_label = "Phishing"
     if final_label == "Safe": final_label = "Legitimate"
 
-    # Save to Database natively
+    # Save natively (fire and forget for this sync op)
     db = SessionLocal()
     try:
         new_case = EmailCase(
@@ -61,7 +68,7 @@ async def analyze_email_from_extension(payload: ExtensionPayload):
             confidence_score=final_score,
             explanation=reasoning.strip(),
             department="Auto-Detected",
-            language=payload.lang,
+            language=combined_flags.get("language", payload.lang),
             flags=combined_flags
         )
         db.add(new_case)

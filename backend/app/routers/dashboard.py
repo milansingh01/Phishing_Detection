@@ -50,13 +50,26 @@ def get_dashboard_data(department: str = "All", db: Session = Depends(get_db), c
     if not department_cases:
         department_cases = [{"department": "General", "cases": 0}]
 
+    false_positives = db.query(EmailCase).filter(EmailCase.predicted_label == "Phishing", EmailCase.human_verification == "Legitimate").count()
+    false_negatives = db.query(EmailCase).filter(EmailCase.predicted_label == "Legitimate", EmailCase.human_verification == "Phishing").count()
+    
+    total_phishing_predictions = db.query(EmailCase).filter(EmailCase.predicted_label == "Phishing").count()
+    far_rate = round((false_positives / total_phishing_predictions * 100), 1) if total_phishing_predictions > 0 else 0.0
+
+    # Business Intelligence extraction from JSON fields securely within the recent memory pool
+    malware_intercepted = sum(1 for c in cases_records if isinstance(c.flags, dict) and (c.flags.get("malicious_executable") or c.flags.get("pdf_suspect")))
+    credential_thefts = sum(1 for c in cases_records if isinstance(c.flags, dict) and c.flags.get("credential_leaks"))
+
     return {
         "kpis": {
             "totalScanned": total_scanned,
             "fraudDetected": fraud_detected,
             "safeEmails": safe_emails,
             "accuracy": round(avg_conf, 1),
-            "moneySaved": fraud_detected * 500 # Just a metric
+            "financialLossPrevented": fraud_detected * 1500,
+            "malwareIntercepted": malware_intercepted,
+            "credentialTheftsPrevented": credential_thefts,
+            "farRate": far_rate
         },
         "charts": {
             "emailsScanned": emails_scanned_chart,
@@ -69,8 +82,8 @@ def get_dashboard_data(department: str = "All", db: Session = Depends(get_db), c
         "cases": cases,
         "performance": {
              "accuracy": round(avg_conf, 1),
-             "falsePositives": db.query(EmailCase).filter(EmailCase.human_verification == "False Positive").count(),
-             "falseNegatives": db.query(EmailCase).filter(EmailCase.human_verification == "Confirmed Safe").count()
+             "falsePositives": false_positives,
+             "falseNegatives": false_negatives
         }
     }
 

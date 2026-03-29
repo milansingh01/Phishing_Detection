@@ -5,7 +5,7 @@ import logging
 
 from .database import engine, Base, SessionLocal
 from .models.db_models import User, EmailCase
-from .routers import extension, dashboard, auth
+from .routers import auth, dashboard, extension, site_scanner
 from .services.queue_manager import consumer_worker
 from .auth import get_password_hash
 
@@ -66,6 +66,7 @@ seed_database()
 app.include_router(extension.router)
 app.include_router(dashboard.router)
 app.include_router(auth.router)
+app.include_router(site_scanner.router)
 
 # Startup Tasks
 @app.on_event("startup")

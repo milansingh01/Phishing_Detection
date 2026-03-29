@@ -15,12 +15,32 @@ function detectEmail() {
     // Extraction
     const bodyText = document.querySelector('.ii.gt, .a3s')?.innerText || '';
     
-    // Attachment detection - Checking multiple common Gmail classes
-    const attachmentItems = document.querySelectorAll('[role="listitem"] .aYw, .hq, .a8X, .a78, .Xv');
+    // Advanced Attachment & Image Detection
     let attachmentsArr = [];
-    attachmentItems.forEach(el => {
-        const name = el.innerText.trim();
-        if (name && !attachmentsArr.includes(name)) attachmentsArr.push(name);
+    
+    // 1. Search for actual Downloadable attachments
+    const downloadLinks = document.querySelectorAll('a[download], [aria-label*="Attachment"], .vI, .aYw, .hq, .a8X, .a78, .Xv, [role="listitem"]');
+    downloadLinks.forEach(el => {
+        let name = el.getAttribute('download') || el.innerText.trim();
+        // Fallback for aria-label "Attachment: filename.pdf"
+        if (!name && el.getAttribute('aria-label')) {
+            const aria = el.getAttribute('aria-label');
+            if (aria.includes("Attachment")) name = aria.replace("Attachment:", "").trim();
+        }
+        if (name && name.length > 3 && name.includes('.') && !attachmentsArr.includes(name)) {
+            attachmentsArr.push(name);
+        }
+    });
+
+    // 2. Explicitly search for inline Images 
+    const images = document.querySelectorAll('img[src*="googleusercontent"], img[alt*="image"]');
+    images.forEach((img, idx) => {
+        let currentExt = "image_file.png";
+        if (img.src.includes(".jpg")) currentExt = `inline_image_${idx}.jpg`;
+        else if (img.src.includes(".gif")) currentExt = `inline_image_${idx}.gif`;
+        if (!attachmentsArr.includes(currentExt)) {
+            attachmentsArr.push(currentExt);
+        }
     });
 
     // Language
@@ -56,7 +76,7 @@ function detectEmail() {
     }
 
     // Automatically send to Backend for Fraud Team Dashboard independently of Popup state
-    fetch('http://localhost:8001/api/analyze', {
+    fetch('http://127.0.0.1:8001/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(result)
@@ -67,6 +87,8 @@ function detectEmail() {
           }
           return res.json();
     }).then(data => {
+          window.lastAnalyzedStatus = data.predicted_label;
+          window.lastAnalyzedFlags = data.flags || {};
           console.log("Barclays Detector: Backend Analysis Complete:", data.predicted_label);
           showBanner(data);
     }).catch(err => {
@@ -139,3 +161,25 @@ window.pollInterval = setInterval(detectEmail, 1500);
 
 // Run on page interaction
 document.addEventListener('click', () => setTimeout(detectEmail, 500));
+
+// --- NEW FEATURE: INTERCEPT DANGEROUS ATTACHMENT CLICKS IN GMAIL ---
+document.body.addEventListener('click', (e) => {
+    // If the click is on an attachment icon, a download button, or an inline image
+    const isAttachmentClick = e.target.closest('a[download], [aria-label*="Attachment"], .vI, .aYw, .hq, .a8X, .a78, .Xv, img[src*="googleusercontent"], img[alt*="image"]');
+    
+    if (isAttachmentClick && window.lastAnalyzedStatus === "Phishing") {
+        if (window.lastAnalyzedFlags && window.lastAnalyzedFlags.malicious_executable) {
+            e.preventDefault();
+            e.stopPropagation();
+            alert("🛑 BARCLAYS SECURITY BLOCK: This attachment was positively identified as a malicious executable capable of installing hidden malware. Download explicitly blocked.");
+        } else {
+            // General phishing attachment warning
+            const proceed = confirm("⚠️ BARCLAYS SECURITY WARNING: The AI has flagged this entire email as Phishing. Opening this attachment or image may expose you to credential smuggling or spyware.\n\nAre you absolutely sure you want to open it?");
+            if (!proceed) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }
+    }
+}, true); // Use capture phase to ensure we intercept it BEFORE Gmail's custom handlers trigger
+

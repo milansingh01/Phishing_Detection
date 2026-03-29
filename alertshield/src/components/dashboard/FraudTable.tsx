@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 export interface TableFraudCase {
+  id: string;
   employee: string;
   department: string;
   emailId: string;
@@ -62,13 +63,14 @@ const FraudTable = ({ cases, onVerify }: FraudTableProps) => {
               <td className="py-3 px-3 text-muted-foreground">
                 <select 
                     value={c.humanVerification || "Pending"}
-                    onChange={(e) => onVerify && onVerify(c.emailId, e.target.value)}
+                    onChange={(e) => onVerify && onVerify(c.id, e.target.value)}
                     className="bg-transparent border border-border rounded px-2 py-1 text-xs focus:ring-1 focus:ring-primary"
                 >
                     <option value="Pending">Pending</option>
                     <option value="Confirmed Fraud">Confirmed Fraud</option>
                     <option value="Confirmed Safe">Confirmed Safe</option>
                     <option value="False Positive">False Positive</option>
+                    <option value="False Negative">False Negative</option>
                 </select>
               </td>
               <td className="py-3 px-3 text-muted-foreground">{c.timestamp}</td>

@@ -33,12 +33,24 @@ document.addEventListener('DOMContentLoaded', () => {
             func: () => {
                 const subject = document.querySelector('h2.hP')?.innerText || document.title.split(' - ')[0] || '';
                 const body = document.querySelector('.ii.gt, .a3s')?.innerText || '';
-                const attachmentContainers = document.querySelectorAll('.aYw, .hq, .a8X, .a78, .Xv, [role="listitem"]');
-                
+                // Advanced Attachment & Image Detection
                 let attachments = [];
-                attachmentContainers.forEach(el => {
-                   const txt = el.innerText.trim();
-                   if (txt && txt.length > 3 && !attachments.includes(txt) && txt.includes('.')) attachments.push(txt);
+                const downloadLinks = document.querySelectorAll('a[download], [aria-label*="Attachment"], .vI, .aYw, .hq, .a8X, .a78, .Xv, [role="listitem"]');
+                downloadLinks.forEach(el => {
+                    let name = el.getAttribute('download') || el.innerText.trim();
+                    if (!name && el.getAttribute('aria-label')) {
+                        const aria = el.getAttribute('aria-label');
+                        if (aria.includes("Attachment")) name = aria.replace("Attachment:", "").trim();
+                    }
+                    if (name && name.length > 3 && name.includes('.') && !attachments.includes(name)) attachments.push(name);
+                });
+
+                const images = document.querySelectorAll('img[src*="googleusercontent"], img[alt*="image"]');
+                images.forEach((img, idx) => {
+                    let currentExt = "image_file.png";
+                    if (img.src.includes(".jpg")) currentExt = `inline_image_${idx}.jpg`;
+                    else if (img.src.includes(".gif")) currentExt = `inline_image_${idx}.gif`;
+                    if (!attachments.includes(currentExt)) attachments.push(currentExt);
                 });
 
                 let lang = "English";
@@ -59,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 reasoningText.textContent = "Computing AI inference...";
                 
                 try {
-                    const response = await fetch('http://localhost:8001/api/analyze', {
+                    const response = await fetch('http://127.0.0.1:8001/api/analyze', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -99,8 +111,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Fill Insights
         securityInsights.classList.remove('hidden');
-        attachmentTypes.textContent = data.attachments || "None Found";
-        languageDetected.textContent = data.lang || "English";
+        
+        let displayLang = data.lang || "English";
+        let attDisplay = data.attachments || "None Found";
+        
+        if (analysis && analysis.flags) {
+            if (analysis.flags.language) displayLang = analysis.flags.language;
+        }
+
+        attachmentTypes.textContent = attDisplay;
+        languageDetected.textContent = displayLang;
         
         // Final UI Updates
         resultSection.classList.remove('hidden');
@@ -109,13 +129,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (analysis) {
             statusText.textContent = `Analysis Complete - ${analysis.predicted_label}`;
-            reasoningText.textContent = analysis.explanation;
             
-            if (analysis.flags && analysis.flags.credential_leaks) {
+            // Build sophisticated reasoning block including exact snippet
+            let finalReasoning = analysis.explanation;
+            if (analysis.flags && analysis.flags.suspicious_phrase_extracted) {
+                finalReasoning += `\nExact match flagged: "${analysis.flags.suspicious_phrase_extracted}"`;
+            }
+            reasoningText.innerText = finalReasoning;
+            
+            if (analysis.flags && analysis.flags.credential_leaks && analysis.flags.credential_leaks.length > 0) {
                 credentialStatus.textContent = `Leaked: ${analysis.flags.credential_leaks.join(', ')}`;
                 credentialStatus.style.color = "red";
             } else {
                 credentialStatus.textContent = "No credentials exposed.";
+                credentialStatus.style.color = "var(--dark)";
             }
 
             if (analysis.predicted_label === "Phishing") {
@@ -131,10 +158,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 resultTitle.textContent = "Email appears Legitimate";
                 resultDesc.textContent = `Confidence: ${analysis.confidence_score}%`;
             }
-
         } else {
             reasoningText.textContent = "Backend model analysis failed or disconnected.";
             credentialStatus.textContent = "Unknown";
+            credentialStatus.style.color = "var(--text-muted)";
             resultSection.className = "result-card warning";
         }
 

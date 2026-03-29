@@ -7,8 +7,11 @@
         "default_popup": "index.html",
         "default_icon": "icon.png"
     },
-    "permissions": ["storage", "tabs", "scripting"],
-    "host_permissions": ["https://mail.google.com/*", "http://localhost:*/*", "http://127.0.0.1:*/*"],
+    "permissions": ["storage", "tabs", "scripting", "webNavigation"],
+    "host_permissions": ["<all_urls>", "http://localhost:*/*", "http://127.0.0.1:*/*"],
+    "background": {
+        "service_worker": "background.js"
+    },
     "content_scripts": [
         {
             "matches": ["https://mail.google.com/*"],
@@ -21,7 +24,7 @@
     "web_accessible_resources": [
         {
             "resources": ["barclays.png", "icon.png"],
-            "matches": ["https://mail.google.com/*"]
+            "matches": ["<all_urls>"]
         }
     ]
 }
