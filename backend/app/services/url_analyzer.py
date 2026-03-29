@@ -23,6 +23,10 @@ class UrlAnalyzer:
              domain = parsed.netloc.lower()
              path = parsed.path.lower()
              
+             # Whitelist localhost / local dev environments
+             if "localhost" in domain or "127.0.0.1" in domain or "::1" in domain:
+                  return {"is_dangerous": False, "reason": "Localhost dev environment gracefully whitelisted."}
+
              # Check 1: Raw IP Adress Instead of Domain (e.g., http://192.168.1.1)
              if re.match(r"^(\d{1,3}\.){3}\d{1,3}(:\d+)?$", domain):
                   return {"is_dangerous": True, "reason": "Direct IP connection detected. This is a common tactic to bypass domain reputation checks."}
