@@ -77,13 +77,13 @@ const Index = () => {
       }
   };
 
-  // ✅ PROMINENT EFFICIENT & ADVANCED KPIS
+  // ✅ PROMINENT EFFICIENT KPIS
   const kpis = [
     { title: "Active Threats", value: data?.kpis.fraudDetected || 0, icon: AlertTriangle },
-    { title: "Financial Loss Prevented", value: `$${(data?.kpis.financialLossPrevented || 0).toLocaleString()}`, icon: BrainCircuit },
-    { title: "Malware Blocked", value: data?.kpis.malwareIntercepted || 0, icon: Target },
-    { title: "Credential Thefts Stopped", value: data?.kpis.credentialTheftsPrevented || 0, icon: ShieldAlert },
-    { title: "False Alarm Rate (FAR)", value: `${data?.kpis.farRate || 0}%`, icon: Activity },
+    { title: "Total Scanned", value: data?.kpis.totalScanned || 0, icon: BrainCircuit },
+    { title: "False Positives", value: data?.performance?.falsePositives || 0, icon: Target },
+    { title: "False Negatives", value: data?.performance?.falseNegatives || 0, icon: ShieldAlert },
+    { title: "Accuracy Score", value: `${data?.performance?.accuracy || 100}%`, icon: Activity },
     { title: "Safe Scanned", value: data?.kpis.safeEmails || 0, icon: Mail },
   ];
 
